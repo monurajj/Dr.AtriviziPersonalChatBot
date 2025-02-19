@@ -109,7 +109,6 @@ app.options("*", (req, res) => {
   res.sendStatus(200);
 });
 
-// Start the server
 const PORT = process.env.PORT || 5002;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
