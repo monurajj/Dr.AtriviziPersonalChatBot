@@ -5,7 +5,15 @@ const cors = require("cors");
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+
+// Allow all origins for now (but restrict this in production)
+app.use(
+  cors({
+    origin: "*",
+    methods: "GET,POST,OPTIONS",
+    allowedHeaders: "Content-Type,Authorization",
+  })
+);
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
@@ -14,7 +22,7 @@ app.post("/chat", async (req, res) => {
   try {
     const { message } = req.body;
 
-    const context = `
+const context = `
     You are a virtual assistant for Dr. Atarizvi's Chronic Care Clinic.
     Your job is to provide accurate, compassionate, and friendly responses based on the clinic's services.
     Be empathetic and helpful, making sure the patient feels valued and supported.
@@ -96,7 +104,13 @@ app.post("/chat", async (req, res) => {
   }
 });
 
+// Handle OPTIONS preflight requests
+app.options("*", (req, res) => {
+  res.sendStatus(200);
+});
 
-app.listen(5002, () => {
-  console.log("Server running on port 5002");
+// Start the server
+const PORT = process.env.PORT || 5002;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
